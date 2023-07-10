@@ -1,41 +1,55 @@
-$(document).ready(function() {
-  var form = $('#atualizar-form');
+document.addEventListener('DOMContentLoaded', function() {
+  var form = document.getElementById('atualizar-form');
 
-  form.on('submit', function(event) {
+  form.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    var aniversariantesInput = $('#aniversariantes');
-    var eventosInput = $('#eventos');
+    var aniversariantesInput = document.getElementById('aniversariantes');
+    var eventosInput = document.getElementById('eventos');
 
-    var aniversariantes = aniversariantesInput.val();
-    var eventos = eventosInput.val();
+    var aniversariantes = aniversariantesInput.value;
+    var eventos = eventosInput.value;
 
-    // Chamar a função do Google Apps Script para atualizar a página inicial
-    atualizarPaginaInicial(aniversariantes, eventos);
+    // Construir a URL da página inicial com os parâmetros de query string
+    var url = 'index.html?aniversariantes=' + encodeURIComponent(aniversariantes) + '&eventos=' + encodeURIComponent(eventos);
 
-    // Limpar os campos do formulário
-    aniversariantesInput.val('');
-    eventosInput.val('');
+    // Redirecionar para a página inicial com os parâmetros de query string
+    window.location.href = url;
   });
+});
 
-  // Função para chamar a API do Google Apps Script
-  function atualizarPaginaInicial(aniversariantes, eventos) {
-    var url = 'https://script.google.com/macros/s/SCRIPT_ID/exec';
-    var data = {
-      aniversariantes: aniversariantes,
-      eventos: eventos
-    };
+document.addEventListener('DOMContentLoaded', function() {
+  var aniversariantesLista = document.getElementById('aniversariantes-lista');
+  var eventosLista = document.getElementById('eventos-lista');
 
-    $.ajax({
-      url: url,
-      type: 'GET',
-      data: data,
-      success: function(response) {
-        console.log('Página inicial atualizada com sucesso!');
-      },
-      error: function(error) {
-        console.error('Ocorreu um erro ao atualizar a página inicial:', error);
+  // Obter os parâmetros de query string da URL
+  var urlParams = new URLSearchParams(window.location.search);
+  var aniversariantes = urlParams.get('aniversariantes');
+  var eventos = urlParams.get('eventos');
+
+  // Atualizar aniversariantes
+  if (aniversariantes) {
+    var aniversariantesArray = aniversariantes.split(',');
+    var aniversariantesHTML = '';
+    for (var i = 0; i < aniversariantesArray.length; i++) {
+      var aniversariante = aniversariantesArray[i].trim();
+      if (aniversariante !== '') {
+        aniversariantesHTML += '<p>' + aniversariante + '</p>';
       }
-    });
+    }
+    aniversariantesLista.innerHTML = aniversariantesHTML;
+  }
+
+  // Atualizar eventos
+  if (eventos) {
+    var eventosArray = eventos.split(',');
+    var eventosHTML = '';
+    for (var j = 0; j < eventosArray.length; j++) {
+      var evento = eventosArray[j].trim();
+      if (evento !== '') {
+        eventosHTML += '<p>' + evento + '</p>';
+      }
+    }
+    eventosLista.innerHTML = eventosHTML;
   }
 });
